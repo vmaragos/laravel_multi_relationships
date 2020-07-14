@@ -33,3 +33,7 @@ Route::get('/projects/{project}', 'ProjectController@show')->middleware('auth');
 Route::post('/projects', 'ProjectController@store');
 
 Route::delete('/projects/{project}', 'ProjectController@destroy');
+
+Route::post('/projects/{project}/add_user', 'ProjectController@add_user');
+
+Route::delete('/projects/{project}/remove_user/{member}', 'ProjectController@remove_user');

@@ -27,7 +27,7 @@
             @if ($errors->has('title'))
                 <p id="error-msg" style="color:red; font-size:1.5vh;">{{ $errors->first('title') }}</p>
             @endif
-            <button type="submit" value="Add">Add</button>
+            <button type="submit" value="Add">Create Project</button>
         </form>
     </div>
     <div id="project-container-list">
@@ -44,9 +44,7 @@
                             @method('DELETE')
                                 <button type="submit" value="Delete">Delete</button>
                             </form>
-
-
-                        @endif
+                            @endif
                         </div>                        
                     </div>
                 </a>        
@@ -73,7 +71,7 @@
 
     <script>    
         $(window).on("load",function(){
-            $(".alert_message").delay(2000).fadeOut("slow");
+            $(".alert_message").delay(4000).fadeOut("slow");
         });
     </script>
 </body>
