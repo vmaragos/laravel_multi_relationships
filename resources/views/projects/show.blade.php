@@ -24,17 +24,17 @@
         <span>Project members:</span>
         <ul>
             @foreach($project->members as $member)
-            <li>{{$member->name}}
-
+            <li>{{$member->name}} <span>(User ID:{{$member->id}})</span>
+                <span>(Assigned on: {{ \Carbon\Carbon::parse($project->updated_at)->format('d  M Y')}})</span>
+                
                 <!-- if connected user is admin, show "remove user"  button -->
                 @if ( Auth::user()->is_admin == 1 )
                 <form class="delete_project_form" method="POST" action="{{url('/projects/'.$project->id.'/remove_user/'.$member->id)}}">
                     @csrf
                     @method('DELETE')
                     <button type="submit" value="Delete">Remove</button>
-                </form>
+                </form><br>
                 @endif
-
             </li>
             @endforeach
         </ul>
@@ -45,13 +45,31 @@
         @if ( Auth::user()->is_admin == 1 )
         <form method="POST" action="{{url('/projects/'.$project->id.'/add_user')}}">
             @csrf
-            <input name="username" id="title" type="text" value="{{old('username')}}"></input>
+            <input name="username" id="title" type="text" value="{{old('username')}}" autofocus></input>
             @if ($errors->has('username'))
                 <p id="error-msg" style="color:red; font-size:1.5vh;">{{ $errors->first('username') }}</p>
             @endif
             <button type="submit" value="Add">Add Member</button>
         </form>
         @endif
+
+        @if ($message = Session::get('failure'))
+        <div class="alert_message" id="failure_message">
+            <p style="color: red;">{{$message}}</p>
+        </div>
+        @endif
+
+        @if ($message = Session::get('success'))
+        <div class="alert_message" id="success_message">
+            <p style="color: green;">{{$message}}</p>
+        </div>
+        @endif
+
+        <script>    
+        $(window).on("load",function(){
+            $(".alert_message").delay(4000).fadeOut("slow");
+        });
+    </script>
 
     </div>
 </body>

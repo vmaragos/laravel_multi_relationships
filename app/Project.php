@@ -11,7 +11,7 @@ class Project extends Model
 
     public function members()
     {
-        return $this->belongsToMany('App\User');
+        return $this->belongsToMany('App\User')->withTimestamps();
     }
     
     public function creator()

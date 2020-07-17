@@ -14,16 +14,10 @@
 </head>
 <body>
 
-    @if ($message = Session::get('success'))
-    <div class="alert_message" id="success_message">
-        <p>{{$message}}</p>
-    </div>
-    @endif
-
     <div id="project-container-header">
         <form method="POST" action="{{url('/projects/')}}">
             @csrf
-            <input name="title" id="title" type="text" value="{{old('title')}}"></input>
+            <input name="title" id="title" type="text" value="{{old('title')}}" autofocus></input>
             @if ($errors->has('title'))
                 <p id="error-msg" style="color:red; font-size:1.5vh;">{{ $errors->first('title') }}</p>
             @endif
@@ -37,7 +31,7 @@
                 <a href="{{url('/projects/'.$project->id)}}">
                     <div id="project-tile">
                         <div id="project-title-box">
-                            <span>{{$project->id}}: {{$project->title}}</span>
+                            <span>{{$project->title}} [{{$project->id}}]</span>
                             @if ( Auth::user()->is_admin == 1 )
                             <form class="delete_project_form" method="POST" action="{{url('/projects/'.$project->id)}}">
                             @csrf
@@ -53,6 +47,12 @@
             
         </ul>
     </div>
+
+    @if ($message = Session::get('success'))
+    <div class="alert_message" id="success_message">
+        <p style="color: green;">{{$message}}</p>
+    </div>
+    @endif
 
     <script>
         $(document).ready(function(){

@@ -38,7 +38,7 @@ class ProjectController extends Controller
     {
         request()->validate([
             
-            'title' => ['required', 'min:3', 'max:20'],
+            'title' => ['required', 'min:3', 'max:20', 'unique:projects'],
         ]);
 
         
@@ -58,6 +58,7 @@ class ProjectController extends Controller
         // dd(Auth::user()->is_admin);
         if (Auth::user()->is_admin == 1)
         {
+            $project->members()->detach(); //remove all relationships with this project, from the project_user (pivot) table
             $project->delete();
         }
         $project_title = $project->title;
@@ -70,24 +71,63 @@ class ProjectController extends Controller
             'username' => ['required', 'min:3', 'max:20'],
         ]);
 
-        $username = request(['username']);        
-
-        $user = User::where('name', $username) -> first();
-        $user_id = $user->id;
-        //find a way to prevent error when user is not found
+        $username = request(['username']);  
+        // var_dump($username);
+        // die;
+        $exists = DB::table('users')->whereName($username)->count() > 0;
         
+        if ($exists)
+        {
+            $user = User::where('name', $username) -> first();
+            $user_id = $user->id;            
+            $is_member = DB::table('project_user')->whereProjectId($project->id)->whereUserId($user_id)->count() > 0;
 
-        $project->members()->attach($user_id);
-        return redirect('/projects/'.$project->id);
+            if (!($is_member))
+            {
+                $project->members()->attach($user_id);
+                return redirect('/projects/'.$project->id)->with('success', 'The user "'.$user->name.'" was successfully added to the "'.$project->title.'" project.');
+            }
+
+            else
+            {
+                return redirect('/projects/'.$project->id)->with('failure', 'The user "'.$user->name.'" is already a member of the "'.$project->title.'" project.');
+                die;
+            }
+
+        }
+
+        else
+        {
+            return redirect('/projects/'.$project->id)->with('failure', 'The user "'.$username['username'].'" does not exist.');
+            die;
+        }
+
+        // return redirect('/projects/'.$project->id);
     }
     
-    public function remove_user(Project $project)
-    {
+    // public function remove_user(Project $project)
+    // {
 
+
+    //     // $username = request(['username']);        
+
+    //     // $user = User::where('name', $username) -> first();
+    //     // $user_id = $user->id;
+
+    //     $user_id = $project->members->pluck('id');
+    //     $project->members()->detach($user_id);
+    //     return redirect('/projects/'.$project->id)->with('success', 'All members have been removed from the "'.$project->title.'" project.');
         
-        $user_id = $project->members()->id;
-        dd($user_id);
-        $project->members()->detach($user_id);
+    //     // $user_id = $project->members()->id;
+    //     // dd($user_id);
+    //     // $project->members()->detach($user_id);
+    //     // return redirect('/projects/'.$project->id);
+    // }
+
+
+    public function remove_user(Project $project, User $member)
+    {
+        $project->members()->detach($member->id);
         return redirect('/projects/'.$project->id);
     }
 }
