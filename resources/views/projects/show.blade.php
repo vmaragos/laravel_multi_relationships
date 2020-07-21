@@ -25,9 +25,9 @@
         <ul>
             @foreach($project->members as $member)
             <li>{{$member->name}} <span>(User ID:{{$member->id}})</span>
-                <span>(Assigned on: {{ \Carbon\Carbon::parse($project->updated_at)->format('d  M Y')}})</span>
+                <span>(Assigned on: {{ \Carbon\Carbon::parse($member->pivot->created_at)->format('d  M Y')}})</span>
                 
-                <!-- if connected user is admin, show "remove user"  button -->
+                <!-- if connected user is admin, show "Remove user" button -->
                 @if ( Auth::user()->is_admin == 1 )
                 <form class="delete_project_form" method="POST" action="{{url('/projects/'.$project->id.'/remove_user/'.$member->id)}}">
                     @csrf
