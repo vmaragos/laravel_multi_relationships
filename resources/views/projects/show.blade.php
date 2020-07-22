@@ -45,7 +45,12 @@
         @if ( Auth::user()->is_admin == 1 )
         <form method="POST" action="{{url('/projects/'.$project->id.'/add_user')}}">
             @csrf
-            <input name="username" id="title" type="text" value="{{old('username')}}" autofocus></input>
+            <select name="username" id="title" type="text" value="{{old('username')}}" autofocus>
+                <option value="default" selected="selected" disabled hidden>Select User</option>
+                @foreach($users as $user)
+                    <option value="{{ $user->name }}" title="{{ $user->email }}">{{ $user->name }}</option>
+                @endforeach
+            </select>
             @if ($errors->has('username'))
                 <p id="error-msg" style="color:red; font-size:1.5vh;">{{ $errors->first('username') }}</p>
             @endif

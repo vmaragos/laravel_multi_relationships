@@ -18,8 +18,12 @@ class ProjectController extends Controller
         // $user->projects()->attach(1);
         // dd($user->projects);
 
+        $users = DB::table('users')->get();
+
         return view('projects.show', [
             'project' => $project,
+            'users' => $users
+
             // 'project_user' => $project_user,
         ]);
 
